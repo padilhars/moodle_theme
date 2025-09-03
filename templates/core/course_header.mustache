@@ -1,39 +1,84 @@
 {{!
-  Mustache template do cabeçalho de curso para o tema UFPel.
-  - Não contém CSS/JS inline.
-  - teacherpicture é um HTML seguro (usamos {{{teacherpicture}}}).
-  - imageurl (quando presente) exibe uma <img> posicionada via SCSS com object-fit: cover.
+    Mustache template do cabeçalho de curso customizado para o tema UFPel.
+    
+    Context variables:
+    * fullname (string) - Nome formatado do curso
+    * imageurl (string) - URL da imagem do curso (opcional)
+    * teachername (string) - Nome do professor responsável (opcional)
+    * teacherpicture (string) - HTML da foto do professor (opcional)
+    * participants (int) - Número de participantes inscritos
+    * startdate (string) - Data de início formatada (opcional)
+    * enddate (string) - Data de término formatada (opcional)  
+    * progress (int) - Percentual de progresso do usuário (0-100) (opcional)
 }}
 
-<div class="ufpel-course-header position-relative">
+<header class="ufpel-course-header" role="banner" aria-label="{{#str}}courseheader, theme_ufpel{{/str}}">
     {{#imageurl}}
-        <img src="{{imageurl}}" alt="{{{fullname}}}" class="ufpel-course-bgimg" />
+        <img src="{{imageurl}}" 
+             alt="{{#str}}courseimage, theme_ufpel, {{fullname}}{{/str}}" 
+             class="ufpel-course-bgimg"
+             loading="lazy" />
     {{/imageurl}}
 
-    <div class="ufpel-course-overlay d-flex flex-column flex-md-row justify-content-between align-items-end p-3">
-        <div class="ufpel-course-left text-white d-flex align-items-end">
-            <div class="ufpel-teacher-photo me-3">
-                {{{teacherpicture}}}
-            </div>
+    <div class="ufpel-course-overlay">
+        <div class="ufpel-course-content">
+            <!-- Informações principais do curso -->
+            <div class="ufpel-course-main">
+                {{#teacherpicture}}
+                <div class="ufpel-teacher-photo" aria-hidden="true">
+                    {{{teacherpicture}}}
+                </div>
+                {{/teacherpicture}}
 
-            <div class="ufpel-course-meta">
-                <h1 class="ufpel-course-title mb-1">{{{fullname}}}</h1>
-                {{#teachername}}<div class="ufpel-course-teacher small mb-1">{{teachername}}</div>{{/teachername}}
-                <div class="ufpel-course-extra small">
-                    {{#participants}}<span class="me-3">{{participants}} participantes</span>{{/participants}}
-                    {{#startdate}}<span class="me-2">{{startdate}}</span>{{/startdate}}
-                    {{#enddate}}<span>- {{enddate}}</span>{{/enddate}}
+                <div class="ufpel-course-meta">
+                    <h1 class="ufpel-course-title">{{fullname}}</h1>
+                    
+                    {{#teachername}}
+                    <div class="ufpel-course-teacher">
+                        <span class="sr-only">{{#str}}teacher, core{{/str}}: </span>
+                        {{teachername}}
+                    </div>
+                    {{/teachername}}
+
+                    <div class="ufpel-course-info">
+                        {{#participants}}
+                        <span class="ufpel-participants">
+                            <span class="sr-only">{{#str}}participants, core{{/str}}: </span>
+                            {{participants}} {{#str}}participants, core{{/str}}
+                        </span>
+                        {{/participants}}
+
+                        {{#startdate}}
+                        <span class="ufpel-dates">
+                            <span class="sr-only">{{#str}}startdate, core{{/str}}: </span>
+                            {{startdate}}
+                            {{#enddate}} - {{enddate}}{{/enddate}}
+                        </span>
+                        {{/startdate}}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {{#progress}}
-        <div class="ufpel-course-right text-end ms-3">
-            <div class="ufpel-progress-wrapper">
-                <progress class="ufpel-progress" value="{{progress}}" max="100" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"></progress>
-                <div class="small text-white mt-1">{{progress}}%</div>
+            <!-- Barra de progresso -->
+            {{#progress}}
+            <div class="ufpel-course-progress">
+                <div class="ufpel-progress-wrapper">
+                    <label for="course-progress-{{uniqid}}" class="sr-only">
+                        {{#str}}progress, core{{/str}}: {{progress}}%
+                    </label>
+                    <progress id="course-progress-{{uniqid}}" 
+                              class="ufpel-progress" 
+                              value="{{progress}}" 
+                              max="100"
+                              aria-describedby="progress-text-{{uniqid}}">
+                        {{progress}}%
+                    </progress>
+                    <div id="progress-text-{{uniqid}}" class="ufpel-progress-text">
+                        {{progress}}%
+                    </div>
+                </div>
             </div>
+            {{/progress}}
         </div>
-        {{/progress}}
     </div>
-</div>
+</header>

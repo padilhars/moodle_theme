@@ -1,122 +1,277 @@
 //
-// SCSS do componente de cabeçalho de curso UFPel
-// Arquivo: scss/components/_courseheader.scss
+// Componente de cabeçalho de curso customizado UFPel
+// Compatível com Moodle 5.x e Bootstrap 5.x
 //
 
+// Variáveis CSS customizáveis
+:root {
+  --ufpel-course-header-height: 320px;
+  --ufpel-course-header-height-mobile: 240px;
+  --ufpel-course-header-overlay-bg: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.1));
+  --ufpel-course-header-radius: 0.75rem;
+  --ufpel-teacher-photo-size: 72px;
+  --ufpel-teacher-photo-size-mobile: 56px;
+  --ufpel-progress-width: 160px;
+  --ufpel-progress-width-mobile: 120px;
+  --ufpel-progress-height: 10px;
+}
+
+// Container principal
 .ufpel-course-header {
   position: relative;
   overflow: hidden;
-  border-radius: 0.5rem;
-  height: 320px; // altura base (ajuste possível via preset)
-  background-color: #222; // fallback caso não haja imagem
+  border-radius: var(--ufpel-course-header-radius);
+  height: var(--ufpel-course-header-height);
+  background-color: var(--bs-dark, #333);
+  margin-bottom: 1.5rem;
+  
+  // Melhora a acessibilidade
+  &:focus-within {
+    outline: 2px solid var(--bs-primary, #0d6efd);
+    outline-offset: 2px;
+  }
+}
 
-  // Imagem de fundo: usamos <img> com object-fit para manter acessibilidade e evitar style inline.
-  .ufpel-course-bgimg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+// Imagem de fundo
+.ufpel-course-bgimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  filter: brightness(0.6) contrast(1.1);
+  transition: filter 0.3s ease;
+  
+  // Melhora a performance em dispositivos com pouco poder de processamento
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Overlay com gradiente
+.ufpel-course-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--ufpel-course-header-overlay-bg);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.5rem;
+  color: white;
+}
+
+// Container do conteúdo
+.ufpel-course-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+// Seção principal (esquerda)
+.ufpel-course-main {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0; // Permite que o flex item shrink
+}
+
+// Foto do professor
+.ufpel-teacher-photo {
+  flex-shrink: 0;
+  
+  img {
+    width: var(--ufpel-teacher-photo-size);
+    height: var(--ufpel-teacher-photo-size);
     object-fit: cover;
-    object-position: center;
-    z-index: 0;
-    filter: brightness(0.55);
-  }
-
-  // Overlay inferior com fade sutil
-  .ufpel-course-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    padding: 1rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0));
-    color: #fff;
-  }
-
-  // Esquerda: foto do professor + metadados
-  .ufpel-course-left {
-    // faz com que a foto e os textos alinhem no fundo
-    align-items: flex-end;
-  }
-
-  .ufpel-teacher-photo {
-    // O HTML gerado por user_picture geralmente inclui .userpicture ou <img>.
-    // Ajustamos o tamanho e arredondamento aqui sem alterar o HTML.
-    img {
-      width: 72px;
-      height: 72px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.15);
-      display: block;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: block;
+    transition: border-color 0.2s ease;
+    
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.4);
     }
   }
+}
 
-  .ufpel-course-meta {
-    .ufpel-course-title {
-      font-size: 1.6rem;
-      font-weight: 600;
-      line-height: 1.05;
-      margin-bottom: 0.2rem;
-    }
-    .ufpel-course-teacher {
-      opacity: 0.95;
-    }
-    .ufpel-course-extra {
-      opacity: 0.95;
-    }
+// Metadados do curso
+.ufpel-course-meta {
+  min-width: 0; // Permite que o texto seja truncado se necessário
+  flex: 1;
+}
+
+.ufpel-course-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+  color: white;
+  
+  // Garante quebra de linha adequada
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.ufpel-course-teacher {
+  font-size: 0.95rem;
+  opacity: 0.95;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.ufpel-course-info {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  
+  .ufpel-participants,
+  .ufpel-dates {
+    display: inline-block;
+    white-space: nowrap;
   }
+}
 
-  // Direita: barra de progresso
-  .ufpel-course-right {
-    .ufpel-progress-wrapper {
-      min-width: 160px;
-      display: inline-block;
-      text-align: right;
-    }
+// Seção de progresso (direita)
+.ufpel-course-progress {
+  flex-shrink: 0;
+  text-align: right;
+}
 
-    .ufpel-progress {
-      width: 160px;
-      height: 10px;
-      -webkit-appearance: none;
-      appearance: none;
+.ufpel-progress-wrapper {
+  min-width: var(--ufpel-progress-width);
+}
+
+.ufpel-progress {
+  width: var(--ufpel-progress-width);
+  height: var(--ufpel-progress-height);
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: none;
+  display: block;
+  
+  // Estilos específicos do browser
+  &::-webkit-progress-bar {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+  }
+  
+  &::-webkit-progress-value {
+    background-color: var(--bs-success, #198754);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  
+  &::-moz-progress-bar {
+    background-color: var(--bs-success, #198754);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+  
+  // Fallback para browsers que não suportam progress
+  &:not([value]) {
+    background-color: rgba(255, 255, 255, 0.15);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background-color: var(--bs-success, #198754);
       border-radius: 999px;
-      overflow: hidden;
-      background-color: rgba(255,255,255,0.12);
-      vertical-align: middle;
-    }
-
-    .ufpel-progress::-webkit-progress-bar {
-      background-color: rgba(255,255,255,0.12);
-    }
-    .ufpel-progress::-webkit-progress-value {
-      background-color: var(--bs-success);
-    }
-    .ufpel-progress::-moz-progress-bar {
-      background-color: var(--bs-success);
+      width: var(--progress-width, 0%);
     }
   }
+}
 
-  // Responsividade: empilha em telas pequenas
-  @media (max-width: 767.98px) {
-    height: 240px;
+.ufpel-progress-text {
+  font-size: 0.875rem;
+  margin-top: 0.375rem;
+  font-weight: 500;
+  color: white;
+}
 
-    .ufpel-course-overlay {
-      padding: 0.75rem;
-    }
+// Media queries para responsividade
+@media (max-width: 991.98px) {
+  .ufpel-course-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .ufpel-course-progress {
+    text-align: left;
+    align-self: flex-end;
+  }
+}
 
-    .ufpel-teacher-photo img {
-      width: 56px;
-      height: 56px;
-    }
+@media (max-width: 767.98px) {
+  :root {
+    --ufpel-course-header-height: var(--ufpel-course-header-height-mobile);
+    --ufpel-teacher-photo-size: var(--ufpel-teacher-photo-size-mobile);
+    --ufpel-progress-width: var(--ufpel-progress-width-mobile);
+  }
+  
+  .ufpel-course-overlay {
+    padding: 1rem;
+  }
+  
+  .ufpel-course-title {
+    font-size: 1.375rem;
+  }
+  
+  .ufpel-course-info {
+    font-size: 0.8125rem;
+  }
+}
 
-    .ufpel-course-meta .ufpel-course-title {
-      font-size: 1.25rem;
-    }
+// Suporte a modo escuro
+@media (prefers-color-scheme: dark) {
+  .ufpel-course-header {
+    background-color: var(--bs-gray-800, #343a40);
+  }
+  
+  .ufpel-course-bgimg {
+    filter: brightness(0.5) contrast(1.1);
+  }
+}
 
-    .ufpel-course-right .ufpel-progress {
-      width: 120px;
-    }
+// Redução de movimento para acessibilidade
+@media (prefers-reduced-motion: reduce) {
+  .ufpel-course-bgimg,
+  .ufpel-teacher-photo img,
+  .ufpel-progress::-webkit-progress-value,
+  .ufpel-progress::-moz-progress-bar {
+    transition: none;
+  }
+}
+
+// Suporte a impressão
+@media print {
+  .ufpel-course-header {
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ccc;
+    height: auto !important;
+    padding: 1rem !important;
+  }
+  
+  .ufpel-course-bgimg,
+  .ufpel-course-overlay {
+    display: none !important;
+  }
+  
+  .ufpel-course-content {
+    position: static !important;
+    color: black !important;
   }
 }
