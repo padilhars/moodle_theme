@@ -1,9 +1,0 @@
-// ufpel.scss (preset opcional do tema)
-// Mantém o comportamento do Boost sem alterações. Você pode copiar o default.scss do Boost
-// como base caso queira evoluir. Aqui, apenas importamos o preset default do Boost para
-// compatibilidade, sem modificar nada.
-
-@import "../../../../../theme/boost/scss/preset/default";
-
-// Observação: o caminho acima é resolvido pelo compilador SCSS do Moodle utilizando include paths.
-// Alternativamente, você pode copiar o conteúdo de default.scss do Boost para cá quando necessário.
