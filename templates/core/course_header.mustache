@@ -1,0 +1,39 @@
+{{!
+  Mustache template do cabeçalho de curso para o tema UFPel.
+  - Não contém CSS/JS inline.
+  - teacherpicture é um HTML seguro (usamos {{{teacherpicture}}}).
+  - imageurl (quando presente) exibe uma <img> posicionada via SCSS com object-fit: cover.
+}}
+
+<div class="ufpel-course-header position-relative">
+    {{#imageurl}}
+        <img src="{{imageurl}}" alt="{{{fullname}}}" class="ufpel-course-bgimg" />
+    {{/imageurl}}
+
+    <div class="ufpel-course-overlay d-flex flex-column flex-md-row justify-content-between align-items-end p-3">
+        <div class="ufpel-course-left text-white d-flex align-items-end">
+            <div class="ufpel-teacher-photo me-3">
+                {{{teacherpicture}}}
+            </div>
+
+            <div class="ufpel-course-meta">
+                <h1 class="ufpel-course-title mb-1">{{{fullname}}}</h1>
+                {{#teachername}}<div class="ufpel-course-teacher small mb-1">{{teachername}}</div>{{/teachername}}
+                <div class="ufpel-course-extra small">
+                    {{#participants}}<span class="me-3">{{participants}} participantes</span>{{/participants}}
+                    {{#startdate}}<span class="me-2">{{startdate}}</span>{{/startdate}}
+                    {{#enddate}}<span>- {{enddate}}</span>{{/enddate}}
+                </div>
+            </div>
+        </div>
+
+        {{#progress}}
+        <div class="ufpel-course-right text-end ms-3">
+            <div class="ufpel-progress-wrapper">
+                <progress class="ufpel-progress" value="{{progress}}" max="100" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"></progress>
+                <div class="small text-white mt-1">{{progress}}%</div>
+            </div>
+        </div>
+        {{/progress}}
+    </div>
+</div>
